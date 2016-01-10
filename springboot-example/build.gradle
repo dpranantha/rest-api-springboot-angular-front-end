@@ -1,0 +1,88 @@
+group 'springboot-angular-example'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'idea'
+apply plugin: 'jetty'
+
+jar {
+    baseName = 'restful-service-springboot'
+    version =  '0.0.1'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext.libVersion = [
+        specs2: '2.4.2',
+        spring: '4.1.9.RELEASE',
+        jersey: '1.1.5.1',
+        slf4j: '1.7.5',
+        scala: '2.11',
+]
+
+libVersion.scala_lib = "${libVersion.scala}.7"
+
+ext.lib = [
+        jersey_client: "com.sun.jersey:jersey-client:${libVersion.jersey}",
+
+        spring: [
+                "org.springframework:spring-beans:${libVersion.spring}",
+                "org.springframework:spring-context:${libVersion.spring}"
+        ],
+        findbugs: 'com.google.code.findbugs:jsr305:2.0.1',
+        guava:'com.google.guava:guava:18.0',
+        fugue: 'com.atlassian.fugue:fugue:2.1.0',
+
+        slf4j_bridges: [
+                "org.slf4j:log4j-over-slf4j:${libVersion.slf4j}",
+                "org.slf4j:jcl-over-slf4j:${libVersion.slf4j}",
+                "org.slf4j:jul-to-slf4j:${libVersion.slf4j}",
+        ],
+        logback: [
+                'ch.qos.logback:logback-classic:1.1.2'
+        ],
+        junit: 'junit:junit:4.11',
+
+        scala_library: "org.scala-lang:scala-library:${libVersion.scala_lib}",
+        scala_logging: "com.typesafe.scala-logging:scala-logging_${libVersion.scala}:3.1.0",
+        specs2: [
+                "org.specs2:specs2-core_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-junit_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-markdown_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-html_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-form_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-gwt_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-mock_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-scalacheck_${libVersion.scala}:${libVersion.specs2}",
+                "org.specs2:specs2-analysis_${libVersion.scala}:${libVersion.specs2}",
+        ],
+        scalatest: "org.scalatest:scalatest_${libVersion.scala}:2.2.2",
+        scalacheck: "org.scalacheck:scalacheck_${libVersion.scala}:1.12.2",
+        mockito: 'org.mockito:mockito-core:1.10.19',
+        spring_test: "org.springframework:spring-test:${libVersion.spring}"
+]
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+
+    testCompile lib.junit
+    testCompile lib.scala_library
+    testCompile lib.scala_logging
+    testCompile lib.scalatest
+    testCompile lib.scalacheck
+}
+
+//for jettyRun
+Properties props = new Properties()
+props.load(new FileInputStream("src/main/resources/configuration.properties"))
+
+httpPort=props.getProperty("server.main.port").toInteger()
+stopPort=props.getProperty("server.stop.port").toInteger()
+stopKey = "stopKey"
