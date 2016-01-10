@@ -1,11 +1,21 @@
 group 'springboot-angular-example'
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.1.RELEASE")
+    }
+}
+
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'idea'
 apply plugin: 'jetty'
+apply plugin: 'spring-boot'
 
 jar {
     baseName = 'restful-service-springboot'
@@ -25,6 +35,7 @@ ext.libVersion = [
         jersey: '1.1.5.1',
         slf4j: '1.7.5',
         scala: '2.11',
+        spring_boot_starter: '1.3.1.RELEASE'
 ]
 
 libVersion.scala_lib = "${libVersion.scala}.7"
@@ -35,6 +46,13 @@ ext.lib = [
         spring: [
                 "org.springframework:spring-beans:${libVersion.spring}",
                 "org.springframework:spring-context:${libVersion.spring}"
+        ],
+
+        spring_boot_starter: [
+                "org.springframework.boot:spring-boot-starter-parent:${libVersion.spring_boot_starter}",
+                "org.springframework.boot:spring-boot-starter-web:${libVersion.spring_boot_starter}",
+                "org.thymeleaf:thymeleaf-spring4",
+                "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
         ],
         findbugs: 'com.google.code.findbugs:jsr305:2.0.1',
         guava:'com.google.guava:guava:18.0',
@@ -71,12 +89,17 @@ ext.lib = [
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile lib.spring_boot_starter
 
     testCompile lib.junit
     testCompile lib.scala_library
     testCompile lib.scala_logging
     testCompile lib.scalatest
     testCompile lib.scalacheck
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
 }
 
 //for jettyRun
